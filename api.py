@@ -25,7 +25,7 @@ class FlightRadar24API(object):
         "adsb": "1",
         "gnd": "1",
         "air": "1",
-        "vehicles": "0",
+        "vehicles": "1",
         "estimated": "1",
         "maxage": "1440000",
         "gliders": "1",
