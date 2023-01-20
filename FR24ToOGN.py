@@ -74,7 +74,7 @@ def getADSB():
 
             #response = requests.request("GET", url, headers=headers)    #requests response
             #ADSBaircraft = response.json()   #assign response to JSON object
-            print(ADSBaircraft)
+            #print(ADSBaircraft)
             num_ac = int(len(ADSBaircraft))   #get number of aircraft in response packet
             print('\nnumber of FR24 api aircraft of type GLID or similar:', num_ac)
             #print('debug num_ac type',type(num_ac))
@@ -173,6 +173,7 @@ def getADSB():
                     for x, item in enumerate(traffic_list): #add gliders to traffic list, update if they already exist
                         if item.id == glider.id:
                             traffic_list[x].id = glider.id
+                            #print('glider.id_ADSB',glider.id) #debug
                             traffic_list[x].id_ADSB = glider.id_ADSB
                             traffic_list[x].callsign_ADSB = glider.callsign_ADSB
                             traffic_list[x].timelast_ADSB = glider.timelast_ADSB
@@ -215,7 +216,7 @@ def getOGN():
             #assign incoming beacon packet to glider object
             gliderOGN = aircraft()
             gliderOGN.aprs_type = APRSbeacon["aprs_type"]
-            gliderOGN.id = APRSbeacon["name"][3:].lower()  #get lowercase right 6 digits (icao hex)
+            gliderOGN.id = APRSbeacon["name"][3:].upper()  #get uppercase right 6 digits (icao hex)
             gliderOGN.id_OGN = APRSbeacon["name"]  #get lowercase right 6 digits (icao hex)
             gliderOGN.alt_OGN = int(round(APRSbeacon["altitude"]*3.28,0))         # in feet
             gliderOGN.callsign_OGN = APRSbeacon["name"]
@@ -230,6 +231,7 @@ def getOGN():
             for x, item in enumerate(traffic_list): #add gliders to traffic list, update if they already exist
                 if item.id == gliderOGN.id:
                     traffic_list[x].id = gliderOGN.id
+                    #print('gliderOGN.id',gliderOGN.id) #debug
                     traffic_list[x].id_OGN = gliderOGN.id_OGN
                     traffic_list[x].alt_OGN = gliderOGN.alt_OGN
                     traffic_list[x].callsign_OGN = gliderOGN.callsign_OGN
@@ -435,23 +437,23 @@ while True:
             #traffic_list.pop(m)
             #break
 
-    #remove ADSB objects older than 60 seconds:
+    #remove ADSB objects older than 45 seconds:
     for m in range(len(traffic_list)):
         dt = int(time.time()) - traffic_list[m].timelast_ADSB
         traffic_list[m].timeDiff_ADSB = dt
         #print('timediff (age of signal):',traffic_list[m].timeDiff)
-        if traffic_list[m].timeDiff_ADSB > 60 and traffic_list[m].timeDiff_ADSB < 100000: #remove old ADSB objects but don't touch objects that have no time
-            print(traffic_list[m].id_ADSB,traffic_list[m].id_OGN,'ADSB missing for more than 60 seconds, removing at',datetime.now())
+        if traffic_list[m].timeDiff_ADSB > 45 and traffic_list[m].timeDiff_ADSB < 100000: #remove old ADSB objects but don't touch objects that have no time
+            print(traffic_list[m].id_ADSB,traffic_list[m].id_OGN,'ADSB missing for more than 45 seconds, removing at',datetime.now())
             traffic_list.pop(m)
             break
         
-    #remove OGN objects older than 60 seconds:
+    #remove OGN objects older than 45 seconds:
     for m in range(len(traffic_list)):
         dt = int(time.time()) - traffic_list[m].timelast_OGN
         traffic_list[m].timeDiff_OGN = dt
         #print('timediff (age of signal):',traffic_list[m].timeDiff)
-        if traffic_list[m].timeDiff_OGN > 60 and traffic_list[m].timeDiff_OGN < 100000: #remove old OGN objects but don't touch objects that have no time
-            print(traffic_list[m].id_ADSB,traffic_list[m].id_OGN,'OGN missing for more than 60 seconds, removing at',datetime.now())
+        if traffic_list[m].timeDiff_OGN > 45 and traffic_list[m].timeDiff_OGN < 100000: #remove old OGN objects but don't touch objects that have no time
+            print(traffic_list[m].id_ADSB,traffic_list[m].id_OGN,'OGN missing for more than 45 seconds, removing at',datetime.now())
             traffic_list.pop(m)
             break
 
@@ -470,7 +472,7 @@ while True:
                   )
 
             #format for APRS OGN servers
-            if traffic_list[n].timelast_ADSB - traffic_list[n].timelast_OGN > 120: #OGN signal is older than ADSB by 120 seconds, or OGN does not exist
+            if traffic_list[n].timelast_ADSB - traffic_list[n].timelast_OGN > 60: #OGN signal is older than ADSB by 60 seconds, or OGN does not exist
                 try:
                     if traffic_list[n].id_OGN[:3] == 'FLR':
                         ICAO = 'FLR' + traffic_list[n].id.upper() # FLR or ICA depending on traffic_list[n].id_OGN
@@ -540,4 +542,5 @@ while True:
             pass
 
     time.sleep(.09)
+
 
