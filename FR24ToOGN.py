@@ -70,7 +70,7 @@ def getADSB():
     print('Connected to FR24 API')
     while True:
         try:
-            ADSBaircraft = fr_api.get_flights(type = 'GLID,S10S,S12S,LK17,AS25,AS26,AS24,A32P,AS28,A33P,A33E,AS30,AS31,DISC,NIMB,ARCP,ARCE,VENT,VNTE,JS1J,JS2J,JS2P,JS3J,JS3E,EB29,U15,DIMO,RF10') #europe coordinates
+            ADSBaircraft = fr_api.get_flights(type = 'GLID,S10S,S12S,LK17,AS25,AS26,AS24,A32P,AS28,A33P,A33E,AS30,AS31,DISC,NIMB,ARCP,ARCE,VENT,VNTE,JS1J,JS2J,JS2P,JS3J,JS3E,EB29,U15,DIMO,RF10,DG1T,DG40,DG50,DG60,DG80')
 
             #response = requests.request("GET", url, headers=headers)    #requests response
             #ADSBaircraft = response.json()   #assign response to JSON object
